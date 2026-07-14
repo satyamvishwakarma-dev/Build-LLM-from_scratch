@@ -18,3 +18,6 @@ class ToyDataset(Dataset):
     
 train_ds = ToyDataset(dataset.X_train, dataset.y_train)
 test_ds = ToyDataset(dataset.X_test, dataset.y_test)
+
+# print(len(train_ds))
+# print(len(test_ds))
