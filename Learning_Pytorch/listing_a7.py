@@ -18,6 +18,6 @@ test_loader = DataLoader(
     shuffle = False,
     num_workers=0
 )
-
-for idx, (x, y) in enumerate(train_loader):
-    print(f"Batch {idx+1}:", x, y)
+if __name__ == "__main__":
+    for idx, (x, y) in enumerate(train_loader):
+        print(f"Batch {idx+1}:", x, y)
