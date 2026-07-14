@@ -1,5 +1,3 @@
-from typing import Any
-
 import torch
 
 
@@ -26,3 +24,11 @@ class NeuralNetwork(torch.nn.Module):
     
 model = NeuralNetwork(50, 3)
 print(model)
+print()
+print(model.layers[0].weight.shape)
+print()
+print(model.layers[0].bias.shape)
+print()
+
+num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+print("Total number of trainable model parameters:", num_params)
