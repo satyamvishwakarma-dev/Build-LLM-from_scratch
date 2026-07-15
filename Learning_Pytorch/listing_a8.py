@@ -10,7 +10,7 @@ train_loader = DataLoader(
     batch_size=2,
     shuffle = True,
     num_workers=0,
-    drop_last=True  # <- this is changed
+    drop_last=True  # <- this is added to the previous listing
 )
 
 test_loader = DataLoader(
