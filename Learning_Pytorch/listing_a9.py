@@ -4,6 +4,7 @@ import torch
 import torch.nn.functional as F
 
 from Learning_Pytorch.listing_a4 import NeuralNetwork
+from Learning_Pytorch.listing_a5 import X_train
 from Learning_Pytorch.listing_a7 import train_loader
 
 torch.manual_seed(123)
@@ -33,3 +34,20 @@ for epoch in range(num_epochs):
 
 if __name__ == "__main__":
     model.eval()
+    print("---")
+    with torch.no_grad():
+        output = model(X_train)
+    print(output)
+    print("---")
+
+    torch.set_printoptions(sci_mode=False)
+    probas = torch.softmax(output, dim=1)
+    print(probas)
+
+    print("---")
+
+    pridiction = torch.argmax(probas, dim=1)
+    print(pridiction)
+    # This gives the total number of parameters
+    # total_params = sum(p.numel() for p in model.parameters())
+    # print(f"Total Parameters: {total_params}")
