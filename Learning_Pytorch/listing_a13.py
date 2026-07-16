@@ -5,7 +5,7 @@ from torch.distributed import init_process_group, destroy_process_group
 import torch.multiprocessing as mp
 import os
 from torch.utils.data import DataLoader
-from listing_a9 import compute_accuracy
+from listing_a9 import compute_accuracy_ddp
 from listing_a6 import train_ds
 from listing_a7 import test_loader
 from listing_a4 import NeuralNetwork
@@ -43,15 +43,26 @@ def main(rank, world_size, num_epochs):
     for epoch in range(num_epochs):
         for features, labels in train_loader:
             features, labels = features.to(rank), labels.to(rank)
+            # 1. Forward pass
+            outputs = model(features)
+            
+            # 2. Compute loss (make sure you use your actual loss function name here)
+            # If your book uses CrossEntropyLoss, it might look like: loss_fn(outputs, labels)
+            loss = torch.nn.functional.cross_entropy(outputs, labels) 
+            
+            # 3. Backward pass & optimize
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
             # insert model prediction and backpropagation code
             print(f"[GPU{rank}] Epoch: {epoch+1:03d}/{num_epochs:03d}"
                   f" | Batchsize {labels.shape[0]:03d}"
                   f" | Train/Val Loss: {loss:.2f}")
                   
     model.eval()
-    train_acc = compute_accuracy(model, train_loader, device=rank)
+    train_acc = compute_accuracy_ddp(model, train_loader, rank)
     print(f"[GPU{rank}] Traning Accuracy", train_acc)
-    test_acc = compute_accuracy(model, test_loader, device=rank)
+    test_acc = compute_accuracy_ddp(model, test_loader, rank)
     print(f"[GPU{rank}] Testing Accuracy", test_acc)
     destroy_process_group()
 

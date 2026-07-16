@@ -49,6 +49,23 @@ def compute_accuracy(model, data_loader):
 
     return (correct / total_examples).item() # type: ignore
 
+def compute_accuracy_ddp(model, data_loader, device):
+    model.eval()
+    correct = 0.0
+    total_examples = 0
+
+    with torch.no_grad():
+        for features, labels in data_loader:
+            # CRUCIAL: Move data to the specific GPU process rank
+            features, labels = features.to(device), labels.to(device)
+            
+            logits = model(features)
+            predictions = torch.argmax(logits, dim=1)
+            correct += torch.sum(labels == predictions)
+            total_examples += len(labels)
+
+    return (correct / total_examples).item() # type: ignore
+
 
 if __name__ == "__main__":
     model.eval()

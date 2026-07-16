@@ -1,3 +1,4 @@
 .idea/
 .venv/
+.wsl_venv/
 Learning_Pytorch/__pycache__/
