@@ -1,4 +1,5 @@
 import torch
+<<<<<<< HEAD
 from listing_a4 import NeuralNetwork
 from listing_a7 import train_loader
 
@@ -32,3 +33,14 @@ for epoch in range(num_epochs):
 
 
 
+=======
+
+tensor_1 = torch.tensor([1, 2, 3])
+tensor_2 = torch.tensor([4, 5, 6])
+
+# print(f"tensor_1 + tensor_2 = {tensor_1 + tensor_2}")
+
+tensor_1 = tensor_1.to("cuda:0")
+tensor_2 = tensor_2.to("cuda:0")
+print(f"tensor_1 + tensor_2 = {tensor_1 + tensor_2}")
+>>>>>>> 761c76486be19487e65cb17c67021cd105be4a48
