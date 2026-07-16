@@ -80,4 +80,3 @@ if __name__ == "__main__":
     # This gives the total number of parameters
     # total_params = sum(p.numel() for p in model.parameters())
     # print(f"Total Parameters: {total_params}")
-
