@@ -25,8 +25,8 @@ for epoch in range(num_epochs):
         optimizer.step()
 
         ### LOGGING
-        print(f"Epoch: {epoch+1:03d}/{num_epochs:03d}"
-              f" | Batch {batch_idx:03d}/{len(train_loader):03d}"
-              f" | Train/Val Loss: {loss:.2f}")
+        print(f"   Epoch: {epoch+1:03d}/{num_epochs:03d}"
+              f" | Batch {batch_idx:03d}/{len(train_loader):03d}" 
+              f" | Train/Val Loss: {loss:.2f}") 
         
     model.eval()
