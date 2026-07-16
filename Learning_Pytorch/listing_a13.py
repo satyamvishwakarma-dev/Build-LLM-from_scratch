@@ -71,6 +71,6 @@ if __name__ == "__main__":
     torch.manual_seed(123)
     num_epochs = 3
     world_size = torch.cuda.device_count()
-    mp.spawn(main, args=(world_size, num_epochs), nprocs=world_size)
+    mp.spawn(main, args=(world_size, num_epochs), nprocs=world_size) # type: ignore
 
 
