@@ -47,7 +47,7 @@ def compute_accuracy(model, data_loader):
         correct += torch.sum(compare)
         total_examples += len(labels)
 
-    return (correct / total_examples).item()
+    return (correct / total_examples).item() # type: ignore
 
 
 if __name__ == "__main__":
