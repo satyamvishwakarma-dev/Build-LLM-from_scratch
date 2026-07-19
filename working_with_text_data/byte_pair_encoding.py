@@ -1,3 +1,4 @@
+
 import tiktoken
 tokenizer = tiktoken.get_encoding("gpt2")
 text = (
@@ -6,7 +7,7 @@ text = (
 )
 unknown = "Akwir ier"
 # integer = tokenizer.encode(text, allowed_special={"<|endoftext|>"})
-integer = tokenizer.encode(unknown)
+integer = tokenizer.encode(text, allowed_special={"<|endoftext|>"})
 
 strings = tokenizer.decode(integer)
 
