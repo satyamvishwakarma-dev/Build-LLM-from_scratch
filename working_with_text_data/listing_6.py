@@ -1,6 +1,7 @@
+from numpy import printoptions
 import tiktoken
 from torch.utils.data import Dataset, DataLoader
-from working_with_text_data.listing_5 import GPTDatasetV1
+from listing_5 import GPTDatasetV1
 
 
 def create_dataloader_v1(txt, batch_size=4, max_length=256, stride=128,
@@ -21,6 +22,13 @@ with open("E:\\Build_LLM\\working_with_text_data\\the-verdict.txt", "r", encodin
     raw_text = f.read()
 
 dataloader = create_dataloader_v1(
-    raw_text, batch_size=1, max_length=4, stride=4, shuffle=False
+    raw_text, batch_size=1, max_length=4, stride=1, shuffle=False
 )
 
+data_iter = iter(dataloader)
+first_batch = next(data_iter)
+second_batch = next(data_iter)
+
+if __name__ == "__main__":
+    print(first_batch)
+    print(second_batch)
