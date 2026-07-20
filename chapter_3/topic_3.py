@@ -16,12 +16,26 @@ inputs = torch.tensor(
 query = inputs[1]
 
 # creates a attention score for 1D tensors with the batch size of 1
-att_scores_2 = torch.empty(inputs.shape[0])
+attn_scores_2 = torch.empty(inputs.shape[0])
 
 # iterates over the input tensor and calculates the dot product
 for i, x_i in enumerate(inputs):
-    att_scores_2[i] = torch.dot(x_i, query)
+    attn_scores_2[i] = torch.dot(x_i, query)
 
-# prints the attention scores
-print(att_scores_2)
+
+att_weight_2_tmp = attn_scores_2 / attn_scores_2.sum()
+
+def softmax_naive(x):
+    return torch.exp(x) / torch.exp(x).sum(dim=0)
+
+attn_weight_2_naive = softmax_naive(attn_scores_2)
+
+if __name__ == "__main__":
+    # prints the attention scores
+    print(attn_scores_2)
+    print("Attention weights:", att_weight_2_tmp )
+    print("Sum of attention weights:", att_weight_2_tmp.sum())
+    print("Attention weights:", attn_weight_2_naive)
+    print("Sum of attention weights:", attn_weight_2_naive.sum())
+
 
