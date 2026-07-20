@@ -22,20 +22,63 @@ attn_scores_2 = torch.empty(inputs.shape[0])
 for i, x_i in enumerate(inputs):
     attn_scores_2[i] = torch.dot(x_i, query)
 
-
+# getting the attention weights by dividing the attention scores by the sum of the attention scores
 att_weight_2_tmp = attn_scores_2 / attn_scores_2.sum()
 
+# making the softmax function for the attention weights
 def softmax_naive(x):
     return torch.exp(x) / torch.exp(x).sum(dim=0)
 
+# using the softmax function to get the attention weights
 attn_weight_2_naive = softmax_naive(attn_scores_2)
+
+# using the softmax function of the torch library to get the attention weights
+attn_weight_2 = torch.softmax(attn_scores_2, dim=0)
+
+context_vector_2 = torch.zeros(query.shape)
+for i, x_i in enumerate(inputs):
+    context_vector_2 += x_i * attn_weight_2[i]
+
+attn_scores = torch.empty(6,6)
+for i, x_i in enumerate(inputs):
+    for j, x_j in enumerate(inputs):
+        attn_scores[i,j] = torch.dot(x_i, x_j)
+
+attn_scores_using_matmul = inputs @ inputs.T
+
+attn_weights = torch.softmax(attn_scores, dim=-1)
+
+row_2_sum = sum([0.1385, 0.2379, 0.2333, 0.1240,0.1082, 0.1581])
+
 
 if __name__ == "__main__":
     # prints the attention scores
     print(attn_scores_2)
+
+    # prints the attention weights
     print("Attention weights:", att_weight_2_tmp )
     print("Sum of attention weights:", att_weight_2_tmp.sum())
+
+    print("\n===USING NAIVE SOFTMAX===")
     print("Attention weights:", attn_weight_2_naive)
     print("Sum of attention weights:", attn_weight_2_naive.sum())
 
+    print("\n===USING TORCH SOFTMAX===")
+    print("Attention weights:", attn_weight_2)
+    print("Sum of attention weights:", attn_weight_2.sum())
 
+    print("\n===USING CONTEXT VECTOR===")
+    print(context_vector_2)
+
+    print("\n===PRINTING ATTENTION SCORES===")
+    print(attn_scores)
+
+    print("\n===PRINTING ATTENTION SCORES USING MATRIX MULTIPLICATION===")
+    print(attn_scores_using_matmul)
+
+    print("\n===PRINTING ATTENTION WEIGHTS USING SOFTMAX===")
+    print(attn_weights)
+
+    print("\n===NORMALIZED ATTENTION WEIGHTS USING SOFTMAX===")
+    print("Row 2 sum:", row_2_sum)
+    print("All row sums:", attn_weights.sum(dim=-1))
