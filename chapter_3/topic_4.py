@@ -25,6 +25,11 @@ attn_score_22 = query_2.dot(key_2)
 
 attn_score_2 = query_2 @ key.T
 
+d_k = key.shape[-1]
+
+attn_weight_2 = torch.softmax(attn_score_2 / d_k ** 0.5, dim=-1)
+
+context_value_2 = attn_weight_2 @ value
 
 if __name__ == "__main__":
     print(query_2)
@@ -35,3 +40,7 @@ if __name__ == "__main__":
     print(attn_score_22)
 
     print(attn_score_2)
+
+    print(attn_weight_2)
+
+    print(context_value_2)
