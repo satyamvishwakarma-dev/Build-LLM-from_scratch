@@ -17,6 +17,21 @@ query_2 = x_2 @ W_query
 key_2 = x_2 @ W_key
 value_2 = x_2 @ W_value
 
+key = inputs @ W_key
+value = inputs @ W_value
+
+key_2 = key[1]
+attn_score_22 = query_2.dot(key_2)
+
+attn_score_2 = query_2 @ key.T
+
 
 if __name__ == "__main__":
     print(query_2)
+
+    print("Key Shape:", key.shape)
+    print("Value Shape:", value.shape)
+
+    print(attn_score_22)
+
+    print(attn_score_2)
