@@ -1,7 +1,7 @@
 from os import name
 
 import torch
-from topic_3 import inputs
+from topic_3_3 import inputs
 
 x_2 = inputs[1]
 d_in = inputs.shape[1]
