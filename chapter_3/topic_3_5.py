@@ -1,3 +1,5 @@
+from multiprocessing import context
+
 import torch
 from listing_3_2 import sa_v2
 from topic_3_4 import d_out, d_in, inputs
@@ -16,6 +18,10 @@ masked_sample = attn_weights * mask_simple
 row_sums = masked_sample.sum(dim=-1, keepdim=True)
 masked_simple_norm = masked_sample / row_sums
 
+mask = torch.triu(torch.ones(context_length, context_length), diagonal=1)
+masked = attn_scores.masked_fill(mask.bool(), -torch.inf)
+
+
 
 if __name__ == "__main__":
     print("\n===ATTN WEIGHTS ===")
@@ -29,3 +35,6 @@ if __name__ == "__main__":
 
     print("===ATTANTION WEIGHT MATRIX WITH SUM 1 ===")
     print(masked_simple_norm)
+
+    print("===MASKED MATRIX USING -INF===")
+    print(masked)
