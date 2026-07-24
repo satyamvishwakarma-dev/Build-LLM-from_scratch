@@ -33,7 +33,7 @@ class MultiHeadAttention(nn.Module):
         queries = queries.transpose(1, 2)
 
         attn_scores = queries @ keys.transpose(2, 3)
-        mask_bool = self.mask.bool()[:num_tokens, :num_tokens]  #type: ignore
+        mask_bool = self.mask.bool()[:num_tokens, :num_tokens]  # type: ignore
 
         attn_scores.masked_fill_(mask_bool, -torch.inf)
         attn_weights = torch.softmax(attn_scores / keys.shape[-1] ** 0.5, dim=-1)
