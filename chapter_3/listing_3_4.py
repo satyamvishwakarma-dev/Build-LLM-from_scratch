@@ -1,6 +1,4 @@
-from sympy import Mul
 import torch
-from torchgen import context
 
 from listing_3_3 import CausalAttention, batch
 import torch.nn as nn
@@ -25,6 +23,7 @@ context_length = batch.shape[1]
 d_in, d_out = 3, 1
 
 mha = MultiHeadAttentionWrapper(d_in, d_out, context_length, 0.0, num_heads=2)
+
 
 context_vec = mha(batch)
 
