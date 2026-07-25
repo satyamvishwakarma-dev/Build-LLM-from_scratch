@@ -1,6 +1,7 @@
 import tiktoken
 import torch
 import torch.nn as nn
+from topic_4_1 import GPT_CONFIG_124M
 
 
 class DummyGPTModel(nn.Module):
@@ -51,6 +52,18 @@ batch = []
 txt1 = "Every effort moves you"
 txt2 = "Every day holds a"
 
-batch.append(tokenizer.encode(txt1))
-batch.append(tokenizer.encode(txt2))
-print(batch)
+batch.append(torch.tensor(tokenizer.encode(txt1)))
+batch.append(torch.tensor(tokenizer.encode(txt2)))
+batch = torch.stack(batch, dim=0)
+
+torch.manual_seed(123)
+model = DummyGPTModel(GPT_CONFIG_124M)
+logits = model(batch)
+
+if __name__ == "__main__":
+    print("Batch\n",batch)
+
+    print("\nOutput Shape: ", logits.shape)
+    print("\nOutput: \n", logits)
+
+    
