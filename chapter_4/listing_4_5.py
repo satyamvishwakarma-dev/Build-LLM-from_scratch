@@ -27,7 +27,7 @@ class ExampleDeepNeuralNetwork(nn.Module):
 layer_sizes = [3,3,3,3,3,1]
 sample_input = torch.tensor([[1., 0., -1.]])
 torch.manual_seed(123)
-model_with_shortcut = ExampleDeepNeuralNetwork(layer_sizes, use_shortcut=False)
+model_without_shortcut = ExampleDeepNeuralNetwork(layer_sizes, use_shortcut=False)
 
 def print_gradient(model, x):
     output = model(x)
@@ -43,5 +43,10 @@ def print_gradient(model, x):
             print(f"{name} has gradient mean of {param.grad.abs().mean().item()}")
 
 
+torch.manual_seed(123)
+model_with_shortcut = ExampleDeepNeuralNetwork(layer_sizes, use_shortcut=True)
+
 if __name__ == '__main__':
+    print_gradient(model_without_shortcut, sample_input)
+    print("\n===USING SHORTCUT===\n")
     print_gradient(model_with_shortcut, sample_input)
