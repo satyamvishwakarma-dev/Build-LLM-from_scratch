@@ -40,6 +40,12 @@ batch = torch.tensor([[6109, 3626, 6100, 345], [6109, 1110, 6622, 257]])
 
 total_params = sum(p.numel() for p in model.parameters())
 
+total_params_gpt2 = total_params - sum(p.numel() for p in model.out_head.parameters())
+
+total_size_bytes = total_params * 4
+
+total_size_mb = total_size_bytes / (1024 * 1024)
+
 
 out = model(batch)
 if __name__ == "__main__":
@@ -50,3 +56,9 @@ if __name__ == "__main__":
 
     print("\nToken embedding layer shape:", model.token_embedding.weight.shape)
     print("\nOutput layer shape:", model.out_head.weight.shape)
+
+    print(f"\nNumber of trainable parameters "
+          f"considering weight tying: {total_params_gpt2:,}")
+
+
+    print(f"\nTotal Size: {total_size_mb:.2f} MB")
