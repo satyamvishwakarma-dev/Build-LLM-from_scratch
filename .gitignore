@@ -2,3 +2,6 @@
 .venv/
 .wsl_venv/
 __pycache__/
+.env
+pyproject.toml
+build_llm.egg-info/
