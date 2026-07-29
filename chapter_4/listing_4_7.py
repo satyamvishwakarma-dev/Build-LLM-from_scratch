@@ -1,5 +1,5 @@
-from listing_4_6 import TransformerBLock
-from topic_4_1 import GPT_CONFIG_124M
+from chapter_4.listing_4_6 import TransformerBLock
+from chapter_4.topic_4_1 import GPT_CONFIG_124M
 import torch
 from torch import nn
 

@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 import tiktoken
-from listing_4_7 import GPT_CONFIG_124M, model
+from chapter_4.listing_4_7 import GPT_CONFIG_124M, model
 
 
 def generate_text_simple(model, idx, max_new_tokens, context_size):

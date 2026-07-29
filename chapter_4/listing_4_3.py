@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from topic_4_1 import GPT_CONFIG_124M
+from chapter_4.topic_4_1 import GPT_CONFIG_124M
 
 class FeedForward(nn.Module):
     def __init__(self, config):
