@@ -35,12 +35,48 @@ probas = torch.softmax(logits, dim=-1)
 
 token_ids = torch.argmax(probas, dim=-1, keepdim=True)
 
+text_idx = 0
+target_probas_1 = probas[text_idx, [0, 1, 2], targets[text_idx]]
+
+text_idx = 1
+target_probas_2 = probas[text_idx, [0, 1, 2], targets[text_idx]]
+
+log_probas = torch.log(torch.cat((target_probas_1, target_probas_2)))
+
+avg_log_probas = torch.mean(log_probas)
+
+neg_avg_log_probas = -avg_log_probas * -1
+
+logits_flat = logits.flatten(0,1)
+target_flat = targets.flatten()
+
+loss = torch.nn.functional.cross_entropy(logits_flat, target_flat)
 
 if __name__ == "__main__":
     print("Output text: \n", token_ids_to_text(token_ids, tokenizer))
     print("\n")
     print("Probas Shape: ", probas.shape)
+    print("\n")
     print("Token IDs: \n", token_ids)
     print("\n")
     print(f"Targets batch 1: {token_ids_to_text(targets[0], tokenizer)}")
+    print("\n")
     print(f"Output batch 1: {token_ids_to_text(token_ids[0].flatten(), tokenizer)}")
+    print("\n")
+    print(f"Target probas 1: {target_probas_1}")
+    print("\n")
+    print(f"Target probas 2: {target_probas_2}")
+    print("\n")
+    print("Log Probas: ",log_probas)
+    print("\n")
+    print(f"Average log probas: {avg_log_probas}")
+    print("\n")
+    print(f"Negative average log probas: {neg_avg_log_probas}")
+    print("\n")
+    print("Logits shape: ", logits.shape)
+    print("Targets shape: ", targets.shape)
+    print("\n")
+    print("Flatten logits: ", logits_flat.shape)
+    print("Flatten targets: ", target_flat.shape)
+    print("\n")
+    print(f"Loss: {loss}")
