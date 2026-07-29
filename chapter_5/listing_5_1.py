@@ -66,7 +66,6 @@ train_data = text_data[:split_idx]
 val_data = text_data[split_idx:]
 
 
-
 torch.manual_seed(123)
 
 train_loader = create_dataloader_v1(
@@ -76,7 +75,7 @@ train_loader = create_dataloader_v1(
     stride=GPT_CONFIG_124M["context_length"],
     drop_last=True,
     shuffle=True,
-    num_workers=0
+    num_workers=0,
 )
 
 val_loader = create_dataloader_v1(
@@ -86,9 +85,18 @@ val_loader = create_dataloader_v1(
     stride=GPT_CONFIG_124M["context_length"],
     drop_last=False,
     shuffle=False,
-    num_workers=0
+    num_workers=0,
 )
 
+
+def calc_loss_batch(input_batch, target_batch, model, device):
+    input_batch = input_batch.to(device)
+    target_batch = target_batch.to(device)
+    logits = model(input_batch)
+    loss = torch.nn.functional.cross_entropy(
+        logits.flatten(0, 1), target_batch.flatten()
+    )
+    return loss
 
 
 if __name__ == "__main__":
