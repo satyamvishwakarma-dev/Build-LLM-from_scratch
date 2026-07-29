@@ -11,7 +11,7 @@ def text_to_token_ids(text, tokenizer):
 
 
 def token_ids_to_text(token_ids, tokenizer):
-    flat = token_ids.squeeze(0)
+    flat = token_ids.flatten()  # Flattens any 2D or 3D tensor down to a 1D list
     return tokenizer.decode(flat.tolist())
 
 
@@ -37,8 +37,7 @@ token_ids = torch.argmax(probas, dim=-1, keepdim=True)
 
 
 if __name__ == "__main__":
-    # Use .squeeze() or .flatten() here so token_ids converts from 3D (2, 3, 1) to a 1D list
-    print("Output text: \n", token_ids_to_text(token_ids.squeeze(), tokenizer))
+    print("Output text: \n", token_ids_to_text(token_ids, tokenizer))
     print("\n")
     print("Probas Shape: ", probas.shape)
     print("Token IDs: \n", token_ids)
