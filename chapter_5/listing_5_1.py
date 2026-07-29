@@ -2,6 +2,7 @@ import tiktoken
 import torch
 from chapter_5.topic_5_1 import model, GPT_CONFIG_124M
 from chapter_4.listing_4_8 import generate_text_simple
+from chapter_2.listing_6 import create_dataloader_v1
 
 
 def text_to_token_ids(text, tokenizer):
@@ -47,36 +48,86 @@ avg_log_probas = torch.mean(log_probas)
 
 neg_avg_log_probas = -avg_log_probas * -1
 
-logits_flat = logits.flatten(0,1)
+logits_flat = logits.flatten(0, 1)
 target_flat = targets.flatten()
 
 loss = torch.nn.functional.cross_entropy(logits_flat, target_flat)
 
+file_path = "chapter_2\\the-verdict.txt"
+with open(file_path, "r", encoding="utf-8") as file:
+    text_data = file.read()
+
+total_characters = len(text_data)
+total_tokens = len(tokenizer.encode(text_data))
+
+train_ratio = 0.90
+split_idx = int(train_ratio * len(text_data))
+train_data = text_data[:split_idx]
+val_data = text_data[split_idx:]
+
+
+
+torch.manual_seed(123)
+
+train_loader = create_dataloader_v1(
+    train_data,
+    batch_size=2,
+    max_length=GPT_CONFIG_124M["context_length"],
+    stride=GPT_CONFIG_124M["context_length"],
+    drop_last=True,
+    shuffle=True,
+    num_workers=0
+)
+
+val_loader = create_dataloader_v1(
+    val_data,
+    batch_size=2,
+    max_length=GPT_CONFIG_124M["context_length"],
+    stride=GPT_CONFIG_124M["context_length"],
+    drop_last=False,
+    shuffle=False,
+    num_workers=0
+)
+
+
+
 if __name__ == "__main__":
-    print("Output text: \n", token_ids_to_text(token_ids, tokenizer))
+    # print("Output text: \n", token_ids_to_text(token_ids, tokenizer))
+    # print("\n")
+    # print("Probas Shape: ", probas.shape)
+    # print("\n")
+    # print("Token IDs: \n", token_ids)
+    # print("\n")
+    # print(f"Targets batch 1: {token_ids_to_text(targets[0], tokenizer)}")
+    # print("\n")
+    # print(f"Output batch 1: {token_ids_to_text(token_ids[0].flatten(), tokenizer)}")
+    # print("\n")
+    # print(f"Target probas 1: {target_probas_1}")
+    # print("\n")
+    # print(f"Target probas 2: {target_probas_2}")
+    # print("\n")
+    # print("Log Probas: ", log_probas)
+    # print("\n")
+    # print(f"Average log probas: {avg_log_probas}")
+    # print("\n")
+    # print(f"Negative average log probas: {neg_avg_log_probas}")
+    # print("\n")
+    # print("Logits shape: ", logits.shape)
+    # print("Targets shape: ", targets.shape)
+    # print("\n")
+    # print("Flatten logits: ", logits_flat.shape)
+    # print("Flatten targets: ", target_flat.shape)
+    # print("\n")
+    # print(f"Loss: {loss}")
     print("\n")
-    print("Probas Shape: ", probas.shape)
+    print(f"Total characters: {total_characters}")
+    print(f"Total tokens: {total_tokens}")
     print("\n")
-    print("Token IDs: \n", token_ids)
+    print("Train Loader: ")
+    for x, y in train_loader:
+        print((x.shape, y.shape))
     print("\n")
-    print(f"Targets batch 1: {token_ids_to_text(targets[0], tokenizer)}")
+    print("Validation Loader: ")
+    for x, y in val_loader:
+        print((x.shape, y.shape))
     print("\n")
-    print(f"Output batch 1: {token_ids_to_text(token_ids[0].flatten(), tokenizer)}")
-    print("\n")
-    print(f"Target probas 1: {target_probas_1}")
-    print("\n")
-    print(f"Target probas 2: {target_probas_2}")
-    print("\n")
-    print("Log Probas: ",log_probas)
-    print("\n")
-    print(f"Average log probas: {avg_log_probas}")
-    print("\n")
-    print(f"Negative average log probas: {neg_avg_log_probas}")
-    print("\n")
-    print("Logits shape: ", logits.shape)
-    print("Targets shape: ", targets.shape)
-    print("\n")
-    print("Flatten logits: ", logits_flat.shape)
-    print("Flatten targets: ", target_flat.shape)
-    print("\n")
-    print(f"Loss: {loss}")

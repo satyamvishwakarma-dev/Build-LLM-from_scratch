@@ -2,7 +2,7 @@ from numpy import printoptions
 import tiktoken
 from torch import ne
 from torch.utils.data import Dataset, DataLoader
-from listing_5 import GPTDatasetV1
+from chapter_2.listing_5 import GPTDatasetV1
 
 
 
@@ -20,7 +20,7 @@ def create_dataloader_v1(txt, batch_size=4, max_length=256, stride=128,
 
     return dataloader
 
-with open("E:\\Build_LLM\\working_with_text_data\\the-verdict.txt", "r", encoding="utf-8") as f:
+with open("E:\\Build_LLM\\chapter_2\\the-verdict.txt", "r", encoding="utf-8") as f:
     raw_text = f.read()
 
 dataloader = create_dataloader_v1(
