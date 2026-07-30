@@ -1,14 +1,34 @@
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
+
 import torch
 from chapter_4.listing_4_8 import generate_text_simple
-from chapter_5.listing_5_1 import calc_loss_batch, text_to_token_ids, token_ids_to_text,train_loader, val_loader, tokenizer 
+from chapter_5.listing_5_1 import (
+    calc_loss_batch,
+    text_to_token_ids,
+    token_ids_to_text,
+    train_loader,
+    val_loader,
+    tokenizer,
+)
 from chapter_5.listing_5_2 import calc_loss_loader, device
 from chapter_5.topic_5_1 import model
 
 torch.manual_seed(123)
 
+
 def train_model_simple(
-        model, train_loader, val_loader, optimizer, device, num_epochs, eval_freq, eval_iter, start_context, tokenizer
-        ):
+    model,
+    train_loader,
+    val_loader,
+    optimizer,
+    device,
+    num_epochs,
+    eval_freq,
+    eval_iter,
+    start_context,
+    tokenizer,
+):
     train_losses, val_losses, track_tokens_seen = [], [], []
     token_seen, global_step = 0, -1
 
@@ -16,9 +36,7 @@ def train_model_simple(
         model.train()
         for input_batch, target_batch in train_loader:
             optimizer.zero_grad()
-            loss = calc_loss_batch(
-                input_batch, target_batch, model, device
-            )
+            loss = calc_loss_batch(input_batch, target_batch, model, device)
             loss.backward()
             optimizer.step()
             token_seen += input_batch.numel()
@@ -31,20 +49,24 @@ def train_model_simple(
                 train_losses.append(train_loss)
                 val_losses.append(val_loss)
                 track_tokens_seen.append(token_seen)
-                print(f"Ep {epoch+1} (Step {global_step:06d}): Train Loss {train_loss:.3f}, Val Loss {val_loss:.3f}")
+                print(
+                    f"Ep {epoch+1} (Step {global_step:06d}): Train Loss {train_loss:.3f}, Val Loss {val_loss:.3f}"
+                )
 
-        generate_and_print_sample(
-            model, tokenizer, device, start_context
-        )
+        generate_and_print_sample(model, tokenizer, device, start_context)
     return train_losses, val_losses, track_tokens_seen
+
 
 def evaluate_model(model, train_loader, val_loader, device, eval_iter):
     model.eval()
     with torch.no_grad():
-        train_loss = calc_loss_loader(train_loader, model, device, num_batches=eval_iter)
+        train_loss = calc_loss_loader(
+            train_loader, model, device, num_batches=eval_iter
+        )
         val_loss = calc_loss_loader(val_loader, model, device, num_batches=eval_iter)
     model.train()
     return train_loss, val_loss
+
 
 def generate_and_print_sample(model, tokenizer, device, start_context):
     model.eval()
@@ -52,19 +74,45 @@ def generate_and_print_sample(model, tokenizer, device, start_context):
     encoded = text_to_token_ids(start_context, tokenizer).to(device)
     with torch.no_grad():
         token_ids = generate_text_simple(
-            model = model,
-            idx = encoded,
-            max_new_tokens = 50,
-            context_size = context_size
+            model=model, idx=encoded, max_new_tokens=50, context_size=context_size
         )
     decoded_text = token_ids_to_text(token_ids, tokenizer)
     print(decoded_text.replace("\n", ""))
     model.train()
-    
 
-model.to(device)
-optimizer = torch.optim.AdamW(model.parameters(), lr=0.0004, weight_decay=0.1)
-num_epochs = 10
-train_losses, val_losses, tokens_seen = train_model_simple(
-    model, train_loader, val_loader, optimizer, device, num_epochs=num_epochs, eval_freq=5, eval_iter=5, start_context="Every effort moves you", tokenizer=tokenizer
-)
+
+def plot_losses(epochs_seen, tokens_seen, train_losses, val_losses):
+    fig, ax1 = plt.subplots(figsize=(5, 3))
+    ax1.plot(epochs_seen, train_losses, label="Training Loss")
+    ax1.plot(epochs_seen, val_losses, linestyle="-.", label="Validation Loss")
+    ax1.set_xlabel("Epochs")
+    ax1.set_ylabel("Loss")
+    ax1.legend(loc="upper right")
+    ax1.xaxis.set_major_locator(MaxNLocator(integer=True))
+    ax2 = ax1.twiny()
+    ax2.plot(tokens_seen, train_losses, alpha=0)
+    ax2.set_xlabel("Tokens Seen")
+    fig.tight_layout()
+    plt.savefig("chapter_5/chapter_5_3.png")
+    plt.show()
+
+
+if __name__ == "__main__":
+    model.to(device)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=0.0004, weight_decay=0.1)
+    num_epochs = 10
+    train_losses, val_losses, tokens_seen = train_model_simple(
+        model,
+        train_loader,
+        val_loader,
+        optimizer,
+        device,
+        num_epochs=num_epochs,
+        eval_freq=5,
+        eval_iter=5,
+        start_context="Every effort moves you",
+        tokenizer=tokenizer,
+    )
+
+    epochs_tensor = torch.linspace(0, num_epochs, len(train_losses))
+    plot_losses(epochs_tensor, tokens_seen, train_losses, val_losses)
