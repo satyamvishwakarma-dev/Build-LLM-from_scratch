@@ -7,4 +7,4 @@ model.to("cpu")
 model.eval()
 
 tokenizer = tiktoken.get_encoding("gpt2")
-token_ids = 
+token_ids = print()
