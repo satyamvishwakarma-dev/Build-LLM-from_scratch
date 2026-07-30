@@ -1,12 +1,6 @@
-from hmac import new
-
-from IPython.core.pylabtools import figsize
-from matplotlib import pyplot as plt
-from pygments.formatters import other
-from sympy import rotations
 import tiktoken
 import torch
-from torch.xpu import temperature
+from matplotlib import pyplot as plt
 
 from chapter_5.listing_5_1 import GPT_CONFIG_124M, generate_text_simple, model
 from chapter_5.listing_5_3 import text_to_token_ids, token_ids_to_text
@@ -41,16 +35,20 @@ next_token_logits = torch.tensor(
 )
 
 probas = torch.softmax(next_token_logits, dim=0)
-next_token_id = torch.argmax(probas).item()
 
+# Argmax sampling
+next_token_id_argmax = torch.argmax(probas).item()
+
+# Multinomial sampling
 torch.manual_seed(123)
-next_token_id = torch.multinomial(probas, num_samples=1).item()
+next_token_id_multinomial = torch.multinomial(probas, num_samples=1).item()
 
 
 def print_sampled_tokens(probas):
     torch.manual_seed(123)
     sample = [torch.multinomial(probas, num_samples=1).item() for i in range(1_000)]
-    sampled_ids = torch.bincount(torch.tensor(sample))
+    # Added minlength so bincount covers all vocab keys even if some get 0 counts
+    sampled_ids = torch.bincount(torch.tensor(sample), minlength=len(vocab))
     for i, freq in enumerate(sampled_ids):
         print(f"{freq} x {inverse_vocab[i]}")
 
@@ -90,11 +88,10 @@ new_logits = torch.where(
 topk_probas = torch.softmax(new_logits, dim=0)
 
 if __name__ == "__main__":
-    print("Output text: \n", token_ids_to_text(token_ids, tokenizer))
     print("\n")
-    print(inverse_vocab[next_token_id])  # type: ignore
+    print(inverse_vocab[next_token_id_argmax])  # Argmax result # type: ignore
     print("\n")
-    print(inverse_vocab[next_token_id])  # type: ignore
+    print(inverse_vocab[next_token_id_multinomial])  # Multinomial result # type: ignore
     print("\n")
     print_sampled_tokens(probas)
     print("\n")
@@ -106,3 +103,4 @@ if __name__ == "__main__":
     print(new_logits)
     print("\n")
     print(topk_probas)
+    
