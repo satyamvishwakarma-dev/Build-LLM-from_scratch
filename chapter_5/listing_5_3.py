@@ -93,7 +93,7 @@ def plot_losses(epochs_seen, tokens_seen, train_losses, val_losses):
     ax2.plot(tokens_seen, train_losses, alpha=0)
     ax2.set_xlabel("Tokens Seen")
     fig.tight_layout()
-    plt.savefig("chapter_5/chapter_5_3.png")
+    # plt.savefig("chapter_5/chapter_5_3.png")
     plt.show()
 
 
