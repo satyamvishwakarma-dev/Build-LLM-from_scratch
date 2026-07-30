@@ -1,7 +1,10 @@
 import torch
 from chapter_4.listing_4_8 import generate_text_simple
-from chapter_5.listing_5_1 import calc_loss_batch, text_to_token_ids, token_ids_to_text
-from chapter_5.listing_5_2 import calc_loss_loader
+from chapter_5.listing_5_1 import calc_loss_batch, text_to_token_ids, token_ids_to_text,train_loader, val_loader, tokenizer 
+from chapter_5.listing_5_2 import calc_loss_loader, device
+from chapter_5.topic_5_1 import model
+
+torch.manual_seed(123)
 
 def train_model_simple(
         model, train_loader, val_loader, optimizer, device, num_epochs, eval_freq, eval_iter, start_context, tokenizer
@@ -45,16 +48,23 @@ def evaluate_model(model, train_loader, val_loader, device, eval_iter):
 
 def generate_and_print_sample(model, tokenizer, device, start_context):
     model.eval()
-    contexr_size = model.positional_embedding.weight.shape[0]
+    context_size = model.positional_embedding.weight.shape[0]
     encoded = text_to_token_ids(start_context, tokenizer).to(device)
     with torch.no_grad():
         token_ids = generate_text_simple(
             model = model,
             idx = encoded,
             max_new_tokens = 50,
-            context_size = contexr_size,
+            context_size = context_size
         )
     decoded_text = token_ids_to_text(token_ids, tokenizer)
     print(decoded_text.replace("\n", ""))
     model.train()
     
+
+model.to(device)
+optimizer = torch.optim.AdamW(model.parameters(), lr=0.0004, weight_decay=0.1)
+num_epochs = 10
+train_losses, val_losses, tokens_seen = train_model_simple(
+    model, train_loader, val_loader, optimizer, device, num_epochs=num_epochs, eval_freq=5, eval_iter=5, start_context="Every effort moves you", tokenizer=tokenizer
+)
