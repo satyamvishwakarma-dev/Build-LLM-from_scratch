@@ -1,5 +1,12 @@
+from hmac import new
+
+from IPython.core.pylabtools import figsize
+from matplotlib import pyplot as plt
+from pygments.formatters import other
+from sympy import rotations
 import tiktoken
 import torch
+from torch.xpu import temperature
 
 from chapter_5.listing_5_1 import GPT_CONFIG_124M, generate_text_simple, model
 from chapter_5.listing_5_3 import text_to_token_ids, token_ids_to_text
@@ -53,6 +60,35 @@ def softmax_with_temperature(logits, temperature):
     return torch.softmax(scaled_logits, dim=0)
 
 
+temperature = [1, 0.1, 5]
+scaled_probas = [softmax_with_temperature(next_token_logits, T) for T in temperature]
+x = torch.arange(len(vocab))
+bar_width = 0.15
+fig, ax = plt.subplots(figsize=(5, 3))
+for i, T in enumerate(temperature):
+    rects = ax.bar(
+        x + i * bar_width,
+        scaled_probas[i],
+        bar_width,
+        label=f"Temperature = {T}",
+    )
+ax.set_ylabel("Probability")
+ax.set_xticks(x)
+ax.set_xticklabels(vocab.keys(), rotation=90)
+ax.legend()
+plt.tight_layout()  # type: ignore
+
+top_k = 3
+top_logits, top_pos = torch.topk(next_token_logits, top_k)
+
+new_logits = torch.where(
+    condition=next_token_logits < top_logits[-1],
+    input=torch.tensor(float("-inf")),
+    other=next_token_logits,
+)
+
+topk_probas = torch.softmax(new_logits, dim=0)
+
 if __name__ == "__main__":
     print("Output text: \n", token_ids_to_text(token_ids, tokenizer))
     print("\n")
@@ -61,3 +97,12 @@ if __name__ == "__main__":
     print(inverse_vocab[next_token_id])  # type: ignore
     print("\n")
     print_sampled_tokens(probas)
+    print("\n")
+    # plt.show()
+    print("\n")
+    print("Top logits:", top_logits)
+    print("Top positions:", top_pos)
+    print("\n")
+    print(new_logits)
+    print("\n")
+    print(topk_probas)
