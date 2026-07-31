@@ -9,3 +9,6 @@ gpt2/
 *.pth
 
 *.pth
+
+sms_spam_collection
+sms_spam_collection.zip
