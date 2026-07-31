@@ -5,3 +5,4 @@ __pycache__/
 .env
 pyproject.toml
 build_llm.egg-info/
+gpt2/
