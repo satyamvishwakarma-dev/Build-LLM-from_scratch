@@ -7,3 +7,5 @@ pyproject.toml
 build_llm.egg-info/
 gpt2/
 *.pth
+
+*.pth
