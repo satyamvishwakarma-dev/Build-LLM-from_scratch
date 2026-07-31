@@ -8,7 +8,7 @@ GPT_CONFIG_124M = {
     "n_head": 12,
     "n_layer": 12,
     "drop_rate": 0.1,
-    "qkv_bias": False
+    "qkv_bias": True
 }
 
 torch.manual_seed(123)

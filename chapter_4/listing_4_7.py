@@ -11,7 +11,7 @@ class GPTModel(nn.Module):
         self.positional_embedding = nn.Embedding(cfg["context_length"], cfg["emb_dim"])
         self.drop_embedding = nn.Dropout(cfg["drop_rate"])
 
-        self.trf_block = nn.Sequential(
+        self.trf_blocks = nn.Sequential(
             *[TransformerBLock(cfg) for _ in range(cfg["n_layer"])]
         )
 
@@ -28,7 +28,7 @@ class GPTModel(nn.Module):
 
         x = token_embeddings + position_embeddings
         x = self.drop_embedding(x)
-        x = self.trf_block(x)
+        x = self.trf_blocks(x)
         x = self.final_norm(x)
         logits = self.out_head(x)
         return logits
