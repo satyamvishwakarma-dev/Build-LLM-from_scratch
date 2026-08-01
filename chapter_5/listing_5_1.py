@@ -1,3 +1,4 @@
+import os
 import tiktoken
 import torch
 from chapter_5.topic_5_1 import model, GPT_CONFIG_124M
@@ -53,7 +54,11 @@ target_flat = targets.flatten()
 
 loss = torch.nn.functional.cross_entropy(logits_flat, target_flat)
 
-file_path = "chapter_2\\the-verdict.txt"
+
+# Get the directory of the current script, go up one level, then into chapter_2
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+file_path = os.path.join(base_dir, "chapter_2", "the-verdict.txt")
+
 with open(file_path, "r", encoding="utf-8") as file:
     text_data = file.read()
 
