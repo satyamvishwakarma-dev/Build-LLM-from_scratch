@@ -8,7 +8,8 @@ build_llm.egg-info/
 gpt2/
 *.pth
 
-*.pth
+*.pt
+
 
 sms_spam_collection
 sms_spam_collection.zip
